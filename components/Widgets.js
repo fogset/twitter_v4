@@ -1,6 +1,7 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import News from "./News";
+import RandomUser from "./RandomUser";
 export default function Widgets({ newsResults, randomUsersResults }) {
     const [articleNum, setArticleNum] = useState(3);
     const [randomUserNum, setRandomUserNum] = useState(3);
@@ -33,30 +34,7 @@ export default function Widgets({ newsResults, randomUsersResults }) {
                 {randomUsersResults
                     .slice(0, randomUserNum)
                     .map((randomUser) => (
-                        <div
-                            key={randomUser.login.username}
-                            className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200"
-                        >
-                            <img
-                                className="rounded-full"
-                                width="40"
-                                src={randomUser.picture.thumbnail}
-                                alt=""
-                            />
-                            <div className="truncate ml-4 leading-5">
-                                <h4 className="font-bold hover:underline text-[14px] truncate">
-                                    {randomUser.login.username}
-                                </h4>
-                                <h5 className="text-[13px] text-gray-500 truncate">
-                                    {randomUser.name.first +
-                                        " " +
-                                        randomUser.name.last}
-                                </h5>
-                            </div>
-                            <button className="ml-auto bg-black text-white rounded-full text-sm px-3.5 py-1.5 font-bold">
-                                Follow
-                            </button>
-                        </div>
+                        <RandomUser randomUser={randomUser} />
                     ))}
 
                 <button
