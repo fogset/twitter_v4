@@ -16,7 +16,6 @@ import { useRecoilState } from "recoil";
 import { doc, getDoc } from "firebase/firestore";
 import { userState } from "../atom/userAtom";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 export default function Sidebar() {
     const [currentUser, setCurrentUser] = useRecoilState(userState);
@@ -47,6 +46,9 @@ export default function Sidebar() {
         signOut(auth);
         setCurrentUser(null);
         router.reload();
+    }
+    function login() {
+        router.push("/auth/signin");
     }
 
     return (
@@ -103,12 +105,12 @@ export default function Sidebar() {
                     </div>
                 </div>
             ) : (
-                <Link
+                <button
+                    onClick={login}
                     className="bg-blue-400 text-white rounded-full w-56 h-12 font-bold shadow-md hover:brightness-95 text-lg hidden xl:inline"
-                    href="/auth/signin"
                 >
-                    <h1 className="items-center">Signin</h1>
-                </Link>
+                    Signin
+                </button>
             )}
         </div>
     );
