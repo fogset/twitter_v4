@@ -9,7 +9,7 @@ import {
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
 import { db, storage } from "../firebase";
 import Moment from "react-moment";
-import { useRecoilState } from "recoil";
+
 import { userState } from "../atom/userAtom";
 import { useState, useEffect } from "react";
 import {
@@ -21,9 +21,12 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { deleteObject, ref } from "firebase/storage";
+import { useRecoilState } from "recoil";
+import { modalState } from "../atom/modalAtom";
 
 export default function Post({ post }) {
     const [currentUser, setCurrentUser] = useRecoilState(userState);
+    const [open, setOpen] = useRecoilState(modalState);
     const [likes, setLikes] = useState([]);
     const [hasLiked, setHasLiked] = useState(false);
     const router = useRouter();
@@ -104,7 +107,10 @@ export default function Post({ post }) {
                 <img className="rounded-2xl mr-2" src={post.data().image} />
                 {/* icons */}
                 <div className="flex justify-between text-gray-500 p-2">
-                    <ChatBubbleOvalLeftEllipsisIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
+                    <ChatBubbleOvalLeftEllipsisIcon
+                        onClick={() => setOpen(!open)}
+                        className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+                    />
                     {currentUser?.uid === post?.data().id && (
                         <TrashIcon
                             onClick={deletePost}
