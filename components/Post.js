@@ -62,7 +62,9 @@ export default function Post({ post }) {
     async function deletePost() {
         if (window.confirm("Are you sure you want to delete this post?")) {
             deleteDoc(doc(db, "posts", post.id));
-            deleteObject(ref(storage, `posts/${post.id}/image`));
+            if (post.data().image) {
+                deleteObject(ref(storage, `posts/${post.id}/image`));
+            }
         }
     }
     return (
@@ -103,7 +105,7 @@ export default function Post({ post }) {
                 {/* icons */}
                 <div className="flex justify-between text-gray-500 p-2">
                     <ChatBubbleOvalLeftEllipsisIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
-                    {currentUser.uid === post?.data().id && (
+                    {currentUser?.uid === post?.data().id && (
                         <TrashIcon
                             onClick={deletePost}
                             className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"

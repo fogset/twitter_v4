@@ -4,7 +4,7 @@ export default function RandomUser({ randomUser }) {
     return (
         <div
             key={randomUser.login.username}
-            className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200"
+            className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200 transition duration-500 ease-out"
         >
             <img
                 className="rounded-full"
