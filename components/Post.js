@@ -7,7 +7,7 @@ import {
     TrashIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import Moment from "react-moment";
 import { useRecoilState } from "recoil";
 import { userState } from "../atom/userAtom";
@@ -20,6 +20,7 @@ import {
     setDoc,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
+import { deleteObject, ref } from "firebase/storage";
 
 export default function Post({ post }) {
     const [currentUser, setCurrentUser] = useRecoilState(userState);
@@ -57,6 +58,13 @@ export default function Post({ post }) {
             router.push("/auth/signin");
         }
     }
+
+    async function deletePost() {
+        if (window.confirm("Are you sure you want to delete this post?")) {
+            deleteDoc(doc(db, "posts", post.id));
+            deleteObject(ref(storage, `posts/${post.id}/image`));
+        }
+    }
     return (
         <div className="flex p-3 cursor-pointer border-b border-gray-200">
             {/*user image */}
@@ -79,7 +87,7 @@ export default function Post({ post }) {
                         </span>
                         <span className="text-sm sm:text-[15px] hover:underline">
                             <Moment fromNow>
-                                {post.data().timestamp.toDate()}
+                                {post?.data()?.timestamp?.toDate()}
                             </Moment>
                         </span>
                     </div>
@@ -95,7 +103,13 @@ export default function Post({ post }) {
                 {/* icons */}
                 <div className="flex justify-between text-gray-500 p-2">
                     <ChatBubbleOvalLeftEllipsisIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
-                    <TrashIcon className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100" />
+                    {currentUser.uid === post?.data().id && (
+                        <TrashIcon
+                            onClick={deletePost}
+                            className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100"
+                        />
+                    )}
+
                     <div className="flex items-center">
                         {hasLiked ? (
                             <HeartIconFilled
