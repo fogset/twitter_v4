@@ -6,18 +6,43 @@ import Widgets from "../../components/Widgets";
 import Post from "../../components/Post";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
+import {
+    doc,
+    onSnapshot,
+    collection,
+    orderBy,
+    query,
+} from "firebase/firestore";
 import { db } from "../../firebase";
+import Comment from "../../components/comment";
 
 export default function PostPage({ newsResults, randomUsersResults }) {
     const router = useRouter();
     const { id } = router.query;
     const [post, setPost] = useState();
+    const [comments, setComments] = useState([]);
+
+    //get comments data
 
     useEffect(
         () => onSnapshot(doc(db, "posts", id), (snapshot) => setPost(snapshot)),
         [db, id]
     );
+
+    //get comments of the post
+
+    useEffect(() => {
+        onSnapshot(
+            query(
+                collection(db, "posts", id, "comments"),
+                orderBy("timestamp", "desc")
+            ),
+            (snapshot) => setComments(snapshot.docs)
+        );
+    }, [db, id]);
+    console.log("comments");
+    console.log(comments);
+
     return (
         <div>
             <Head>
@@ -47,6 +72,18 @@ export default function PostPage({ newsResults, randomUsersResults }) {
                             Tweet
                         </h2>
                     </div>
+
+                    {comments.length > 0 && (
+                        <div className="">
+                            {comments.map((comment) => (
+                                <Comment
+                                    key={comment.id}
+                                    id={comment.id}
+                                    comment={comment.data()}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Widgets */}
