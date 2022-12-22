@@ -7,6 +7,7 @@ import {
     TrashIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
+import { ChatBubbleOvalLeftEllipsisIcon as ChatBubbleOvalLeftEllipsisIconFilled } from "@heroicons/react/24/solid";
 import { db, storage } from "../firebase";
 import Moment from "react-moment";
 
@@ -31,10 +32,16 @@ export default function Post({ post }) {
     const [open, setOpen] = useRecoilState(modalState);
     const [postId, setPostId] = useRecoilState(postIdState);
     const router = useRouter();
+    const [comments, setComments] = useState([]);
+
     useEffect(() => {
-        const unsubscribe = onSnapshot(
-            collection(db, "posts", post.id, "likes"),
-            (snapshot) => setLikes(snapshot.docs)
+        onSnapshot(collection(db, "posts", post.id, "comments"), (snapshot) =>
+            setComments(snapshot.docs)
+        );
+    }, [db]);
+    useEffect(() => {
+        onSnapshot(collection(db, "posts", post.id, "likes"), (snapshot) =>
+            setLikes(snapshot.docs)
         );
     }, [db]);
 
@@ -83,7 +90,7 @@ export default function Post({ post }) {
                 alt="user-img"
             />
             {/* right side */}
-            <div className="">
+            <div className="flex-1">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     {/* post user info */}
@@ -109,19 +116,25 @@ export default function Post({ post }) {
                 </p>
                 {/* post image */}
                 <img className="rounded-2xl mr-2" src={post.data().image} />
-                {/* icons */}
+                {/* icons  ChatBubbleOvalLeftEllipsisIcon*/}
                 <div className="flex justify-between text-gray-500 p-2">
-                    <ChatBubbleOvalLeftEllipsisIcon
-                        onClick={() => {
-                            if (!currentUser) {
-                                signIn();
-                            } else {
-                                setPostId(post.id);
-                                setOpen(!open);
-                            }
-                        }}
-                        className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
-                    />
+                    <div className="flex items-center select-none">
+                        <ChatBubbleOvalLeftEllipsisIcon
+                            onClick={() => {
+                                if (!session) {
+                                    signIn();
+                                } else {
+                                    setPostId(post.id);
+                                    setOpen(!open);
+                                }
+                            }}
+                            className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+                        />
+                        {comments.length > 0 && (
+                            <span className="text-sm">{comments.length}</span>
+                        )}
+                    </div>
+
                     {currentUser?.uid === post?.data().id && (
                         <TrashIcon
                             onClick={deletePost}

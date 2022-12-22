@@ -3,20 +3,30 @@ import {
     FaceSmileIcon,
     XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useRecoilState } from "recoil";
+
 import { modalState, postIdState } from "../atom/modalAtom";
 import Modal from "react-modal";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
-import { doc, onSnapshot } from "firebase/firestore";
 import Moment from "react-moment";
-import { data } from "autoprefixer";
+import { useRecoilState } from "recoil";
+import { userState } from "../atom/userAtom";
+import {
+    addDoc,
+    collection,
+    doc,
+    onSnapshot,
+    serverTimestamp,
+} from "firebase/firestore";
+import { useRouter } from "next/router";
 
 export default function CommentModal() {
+    const [currentUser, setCurrentUser] = useRecoilState(userState);
     const [open, setOpen] = useRecoilState(modalState);
     const [postId] = useRecoilState(postIdState);
     const [post, setPost] = useState({});
     const [input, setInput] = useState("");
+    const router = useRouter();
 
     useEffect(() => {
         onSnapshot(doc(db, "posts", postId), (snapshot) => {
@@ -24,7 +34,22 @@ export default function CommentModal() {
         });
     }, [postId, db]);
 
-    function sendComment() {}
+    async function sendComment() {
+        const docRef = await addDoc(
+            collection(db, "posts", postId, "comments"),
+            {
+                comment: input,
+                name: currentUser.name,
+                username: currentUser.username,
+                userImg: currentUser.userImg,
+                timestamp: serverTimestamp(),
+            }
+        );
+        setOpen(false);
+        setInput("");
+        //router.push(`posts/${postId}`);
+    }
+
     return (
         <div>
             {open && (
