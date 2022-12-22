@@ -43,6 +43,7 @@ export default function CommentModal() {
                 username: currentUser.username,
                 userImg: currentUser.userImg,
                 timestamp: serverTimestamp(),
+                userId: currentUser.uid,
             }
         );
         setOpen(false);

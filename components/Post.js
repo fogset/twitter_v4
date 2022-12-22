@@ -25,7 +25,7 @@ import { deleteObject, ref } from "firebase/storage";
 import { useRecoilState } from "recoil";
 import { modalState, postIdState } from "../atom/modalAtom";
 
-export default function Post({ post }) {
+export default function Post({ post, id }) {
     const [currentUser, setCurrentUser] = useRecoilState(userState);
     const [likes, setLikes] = useState([]);
     const [hasLiked, setHasLiked] = useState(false);
@@ -111,11 +111,18 @@ export default function Post({ post }) {
                     <EllipsisHorizontalIcon className="h-10 hoverEffect w-10 hover:bg-sky-100 hover:text-sky-500 p-2" />
                 </div>
                 {/* post text */}
-                <p className="text-gray-800 text-[15px sm:text[16px] mb-2]">
+                <p
+                    onClick={() => router.push(`posts/${postId}`)}
+                    className="text-gray-800 text-[15px sm:text[16px] mb-2]"
+                >
                     {post.data().text}
                 </p>
                 {/* post image */}
-                <img className="rounded-2xl mr-2" src={post.data().image} />
+                <img
+                    onClick={() => router.push(`posts/${postId}`)}
+                    className="rounded-2xl mr-2"
+                    src={post.data().image}
+                />
                 {/* icons  ChatBubbleOvalLeftEllipsisIcon*/}
                 <div className="flex justify-between text-gray-500 p-2">
                     <div className="flex items-center select-none">
