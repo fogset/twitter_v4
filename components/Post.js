@@ -121,7 +121,7 @@ export default function Post({ post }) {
                     <div className="flex items-center select-none">
                         <ChatBubbleOvalLeftEllipsisIcon
                             onClick={() => {
-                                if (!session) {
+                                if (!currentUser) {
                                     signIn();
                                 } else {
                                     setPostId(post.id);
