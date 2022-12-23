@@ -72,7 +72,7 @@ export default function PostPage({ newsResults, randomUsersResults }) {
                             Tweet
                         </h2>
                     </div>
-
+                    <Post id={id} post={post} />
                     {comments.length > 0 && (
                         <div className="">
                             {comments.map((comment) => (

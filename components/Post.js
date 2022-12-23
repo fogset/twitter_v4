@@ -7,7 +7,7 @@ import {
     TrashIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
-import { ChatBubbleOvalLeftEllipsisIcon as ChatBubbleOvalLeftEllipsisIconFilled } from "@heroicons/react/24/solid";
+
 import { db, storage } from "../firebase";
 import Moment from "react-moment";
 
@@ -35,12 +35,12 @@ export default function Post({ post, id }) {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-        onSnapshot(collection(db, "posts", post.id, "comments"), (snapshot) =>
+        onSnapshot(collection(db, "posts", id, "comments"), (snapshot) =>
             setComments(snapshot.docs)
         );
     }, [db]);
     useEffect(() => {
-        onSnapshot(collection(db, "posts", post.id, "likes"), (snapshot) =>
+        onSnapshot(collection(db, "posts", id, "likes"), (snapshot) =>
             setLikes(snapshot.docs)
         );
     }, [db]);
@@ -54,16 +54,11 @@ export default function Post({ post, id }) {
     async function likePost() {
         if (currentUser) {
             if (hasLiked) {
-                await deleteDoc(
-                    doc(db, "posts", post.id, "likes", currentUser.uid)
-                );
+                await deleteDoc(doc(db, "posts", id, "likes", currentUser.uid));
             } else {
-                await setDoc(
-                    doc(db, "posts", post.id, "likes", currentUser.uid),
-                    {
-                        username: currentUser.username,
-                    }
-                );
+                await setDoc(doc(db, "posts", id, "likes", currentUser.uid), {
+                    username: currentUser.username,
+                });
             }
         } else {
             signIn();
@@ -75,10 +70,11 @@ export default function Post({ post, id }) {
 
     async function deletePost() {
         if (window.confirm("Are you sure you want to delete this post?")) {
-            deleteDoc(doc(db, "posts", post.id));
+            deleteDoc(doc(db, "posts", id));
             if (post.data().image) {
-                deleteObject(ref(storage, `posts/${post.id}/image`));
+                deleteObject(ref(storage, `posts/${id}/image`));
             }
+            router.push("/");
         }
     }
     return (
@@ -86,7 +82,7 @@ export default function Post({ post, id }) {
             {/*user image */}
             <img
                 className="h-11 w-11 rounded-full mr-4"
-                src={post.data().userImg}
+                src={post?.data()?.userImg}
                 alt="user-img"
             />
             {/* right side */}
@@ -96,10 +92,10 @@ export default function Post({ post, id }) {
                     {/* post user info */}
                     <div className="flex items-center space-x-1 whitespace-nowrap">
                         <h4 className="font-bold text-[15px] sm:text-[16px] hover:underline">
-                            {post.data().name}
+                            {post?.data()?.name}
                         </h4>
                         <span className="text-sm sm:text-[15px]">
-                            @{post.data().username}
+                            @{post?.data()?.username}
                         </span>
                         <span className="text-sm sm:text-[15px] hover:underline">
                             <Moment fromNow>
@@ -112,16 +108,16 @@ export default function Post({ post, id }) {
                 </div>
                 {/* post text */}
                 <p
-                    onClick={() => router.push(`posts/${postId}`)}
+                    onClick={() => router.push(`posts/${id}`)}
                     className="text-gray-800 text-[15px sm:text[16px] mb-2]"
                 >
-                    {post.data().text}
+                    {post?.data()?.text}
                 </p>
                 {/* post image */}
                 <img
-                    onClick={() => router.push(`posts/${postId}`)}
+                    onClick={() => router.push(`posts/${id}`)}
                     className="rounded-2xl mr-2"
-                    src={post.data().image}
+                    src={post?.data()?.image}
                 />
                 {/* icons  ChatBubbleOvalLeftEllipsisIcon*/}
                 <div className="flex justify-between text-gray-500 p-2">
@@ -131,7 +127,7 @@ export default function Post({ post, id }) {
                                 if (!currentUser) {
                                     signIn();
                                 } else {
-                                    setPostId(post.id);
+                                    setPostId(id);
                                     setOpen(!open);
                                 }
                             }}
