@@ -47,9 +47,9 @@ export default function Post({ post, id }) {
 
     useEffect(() => {
         setHasLiked(
-            likes.findIndex((like) => like.id === currentUser.uid) !== -1
+            likes.findIndex((like) => like.id === currentUser?.uid) !== -1
         );
-    }, [likes]);
+    }, [likes, currentUser]);
 
     async function likePost() {
         if (currentUser) {
@@ -119,7 +119,7 @@ export default function Post({ post, id }) {
                     className="rounded-2xl mr-2"
                     src={post?.data()?.image}
                 />
-                {/* icons  ChatBubbleOvalLeftEllipsisIcon*/}
+
                 <div className="flex justify-between text-gray-500 p-2">
                     <div className="flex items-center select-none">
                         <ChatBubbleOvalLeftEllipsisIcon

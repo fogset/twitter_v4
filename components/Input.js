@@ -67,7 +67,7 @@ export default function input() {
             {currentUser && (
                 <div className="flex border-b border-gray-200 p-3 space-x-3">
                     <img
-                        src="https://image.shutterstock.com/image-photo/mountains-under-mist-morning-amazing-260nw-1725825019.jpg"
+                        src={currentUser.userImg}
                         alt="user-image"
                         className="h-11 w-11 rounded-full cursor-pointer hover:brightness-95"
                     />
