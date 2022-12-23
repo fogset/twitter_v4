@@ -136,7 +136,7 @@ export default function Comment({ comment, commentId, originalPostId }) {
                     <div className="flex items-center select-none">
                         <ChatBubbleOvalLeftEllipsisIcon
                             onClick={() => {
-                                if (!session) {
+                                if (!currentUser) {
                                     signIn();
                                 } else {
                                     setPostId(originalPostId);
